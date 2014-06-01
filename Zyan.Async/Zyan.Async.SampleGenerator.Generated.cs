@@ -1,5 +1,5 @@
 ﻿// Assembly name: Zyan.Async.TestInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-namespace Zyan.Async.TestInterfaces.Client
+namespace Zyan.Async.TestInterfaces
 {
 	/// <summary>
 	/// Asynchronous extension methods for the <see cref="IGenericMethods" /> interface.
@@ -39,7 +39,7 @@ namespace Zyan.Async.TestInterfaces.Client
 	}
 } // Zyan.Async.TestInterfaces.Client.IGenericMethodsAsyncExtensions
 
-namespace Zyan.Async.TestInterfaces.Client
+namespace Zyan.Async.TestInterfaces
 {
 	/// <summary>
 	/// Asynchronous extension methods for the <see cref="INonGenericMethods" /> interface.
@@ -79,7 +79,7 @@ namespace Zyan.Async.TestInterfaces.Client
 	}
 } // Zyan.Async.TestInterfaces.Client.INonGenericMethodsAsyncExtensions
 
-namespace Zyan.Async.TestInterfaces.Client
+namespace Zyan.Async.TestInterfaces
 {
 	/// <summary>
 	/// Asynchronous extension methods for the <see cref="INotSupportedMembers" /> interface.

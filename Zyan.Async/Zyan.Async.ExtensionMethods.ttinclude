@@ -28,7 +28,7 @@
 		// emit extension class for each interface
 		foreach (var type in asm.GetTypes())
 		{
-#>namespace <#= type.Namespace #>.Client
+#>namespace <#= type.Namespace #>
 {
 	/// <summary>
 	/// Asynchronous extension methods for the <see cref="<#= type.Name #>" /> interface.
@@ -84,14 +84,24 @@
 	}
 #>
 <#+
-	private string GetTypeName(Type type)
+	public string GetTypeName(Type type)
 	{
+		if (type == null)
+		{
+			return string.Empty;
+		}
+
 		if (!type.IsGenericType)
 		{
 			return type.FullName ?? type.Name;
 		}
 
-        var typeArguments = string.Join(", ", type.GetGenericArguments().Select(x => GetTypeName(x)));
-        return Regex.Replace(type.GetGenericTypeDefinition().FullName, @"`.+$", "") + "<" + typeArguments + ">";
+		var typeArguments = string.Join(", ", type.GetGenericArguments().Select(x => GetTypeName(x)));
+		return Regex.Replace(type.GetGenericTypeDefinition().FullName, @"`.+$", "") + "<" + typeArguments + ">";
+	}
+
+	public string GetTypeName<T>()
+	{
+		return GetTypeName(typeof(T));
 	}
 #>

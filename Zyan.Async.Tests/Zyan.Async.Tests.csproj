@@ -42,7 +42,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="INonGenericMethodsTests.cs" />
+    <Compile Include="GetNameTests.cs" />
+    <Compile Include="NonGenericMethodsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

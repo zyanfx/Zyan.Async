@@ -40,6 +40,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Zyan.Async.SampleGenerator.Generated.cs</LastGenOutput>
     </None>
+    <None Include="ZyanAsyncSamplePreprocessor.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ZyanAsyncSamplePreprocessor.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zyan.Async.TestInterfaces\Zyan.Async.TestInterfaces.csproj">
@@ -55,6 +59,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Zyan.Async.SampleGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ZyanAsyncSamplePreprocessor.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZyanAsyncSamplePreprocessor.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

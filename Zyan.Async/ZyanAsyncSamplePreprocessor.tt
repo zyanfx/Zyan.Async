@@ -1,0 +1,8 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ include file="Zyan.Async.ExtensionMethods.ttinclude" #><#
+
+/// --------------------------------------
+/// Add your assemblies here: 
+/// -------------------------------------#>
+
+<#@ assembly name="$(SolutionDir)\Zyan.Async.TestInterfaces\bin\Debug\Zyan.Async.TestInterfaces.dll" #>
