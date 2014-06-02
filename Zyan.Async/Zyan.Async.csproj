@@ -36,9 +36,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="Zyan.Async.ExtensionMethods.ttinclude" />
-    <None Include="Zyan.Async.SampleGenerator.tt">
+    <None Include="ZyanAsyncSampleGenerator.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Zyan.Async.SampleGenerator.Generated.cs</LastGenOutput>
+      <LastGenOutput>ZyanAsyncSampleGenerator.Generated.cs</LastGenOutput>
     </None>
     <None Include="ZyanAsyncSamplePreprocessor.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -55,14 +55,18 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Zyan.Async.SampleGenerator.Generated.cs">
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ZyanAsyncSampleGenerator.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Zyan.Async.SampleGenerator.tt</DependentUpon>
+      <DependentUpon>ZyanAsyncSampleGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="ZyanAsyncSamplePreprocessor.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>ZyanAsyncSamplePreprocessor.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ZyanAsyncSamplePreprocessor.Custom.cs">
       <DependentUpon>ZyanAsyncSamplePreprocessor.tt</DependentUpon>
     </Compile>
   </ItemGroup>

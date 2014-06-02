@@ -1,4 +1,11 @@
-﻿<#@ assembly name="System.Core" #>
+﻿<#
+// Extension method generator.
+//
+// Inspects all loaded assemblies, extracts interface types.
+// For every interface creates static class with asynchronous extension methods.
+#>
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
@@ -7,16 +14,26 @@
 <#@ import namespace="System.Reflection" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".Generated.cs" #>
-<#
+// Rewriting XML comments is not supported
+#pragma warning disable 1591
 
-	// ignore lists for assemblies and interface methods
-	var asmIgnoreList = "^(mscorlib|Microsoft|System|WindowsBase|EnvDTE|Accessibility)";
+<#
+	// ignore lists
+	var asmIgnoreList = "^(mscorlib|Microsoft|System|WindowsBase|EnvDTE|Accessibility|UltimaLib|Zyan.Communication)";
+	var typeIgnoreList = "^(Microsoft.VisualStudio.TextTemplating)";
 	var methodIgnoreList = "^(get_|set_|add_|remove)";
+
+	Func<Type, bool> typeFilter = t =>
+		t.IsInterface && 
+		!t.IsGenericType && 
+		!Regex.IsMatch(t.Name, typeIgnoreList) &&
+		!System.Attribute.IsDefined(t, typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute)) &&
+		t.GetMethods().Any(m => !Regex.IsMatch(m.Name, methodIgnoreList));
 
 	// get loaded assemblies containing interfaces
 	var asms =
 		from asm in AppDomain.CurrentDomain.GetAssemblies()
-		where !Regex.IsMatch(asm.GetName().Name, asmIgnoreList) && asm.GetTypes().Any(t => t.IsInterface)
+		where !Regex.IsMatch(asm.GetName().Name, asmIgnoreList) && GetTypes(asm).Any(typeFilter)
 		orderby asm.FullName
 		select asm;
 
@@ -26,12 +43,12 @@
 		#>// Assembly name: <#= asm.FullName #>
 <#
 		// emit extension class for each interface
-		foreach (var type in asm.GetTypes())
+		foreach (var type in GetTypes(asm).Where(typeFilter))
 		{
-#>namespace <#= type.Namespace #>
+#>namespace <#= GetClientNamespace(type) #>
 {
 	/// <summary>
-	/// Asynchronous extension methods for the <see cref="<#= type.Name #>" /> interface.
+	/// Asynchronous extension methods for the <see cref="<#= type.FullName #>" /> interface.
 	/// </summary>
 	public static class <#= type.Name #>AsyncExtensions
 	{
@@ -39,6 +56,13 @@
 			// create asynchronous extension method for every synchronous method
 			foreach (var method in type.GetMethods().Where(m => !Regex.IsMatch(m.Name, methodIgnoreList)))
 			{
+				var methodParameters = method.GetParameters();
+				if (methodParameters.Any(p => p.IsOut || p.IsRetval || p.ParameterType.IsPointer || p.ParameterType.IsByRef))
+				{
+					// methods with ref/out parameters cannot be async
+					continue;
+				}
+
 				var returnType = method.ReturnType;
 				if (returnType == typeof(void) || returnType == typeof(Task))
 				{
@@ -50,9 +74,11 @@
 				}
 
 				var genericParameters = string.Empty;
+				var genericConstraints = Enumerable.Empty<string>();
 				if (method.IsGenericMethod)
 				{
 					genericParameters = "<" + string.Join(", ", method.GetGenericArguments().Select(t => GetTypeName(t))) + ">";
+					genericConstraints = method.GetGenericArguments().Select(t => GetTypeConstraints(t)).Where(c => c != null);
 				}
 
 				var parameters = string.Join(", ", method.GetParameters().Select(p =>
@@ -69,7 +95,15 @@
 				var actualParameters = string.Join(", ", method.GetParameters().Select(p => p.Name));
 
 #>		// <#= method #>
-		public static <#= GetTypeName(returnType) #> <#= method.Name #>Async<#= genericParameters #>(this <#= type.Name #> self<#= parameters#>)
+		public static <#= GetTypeName(returnType) #> <#= method.Name #>Async<#= genericParameters #>(this <#= type.FullName #> self<#= parameters#>)
+<# 
+			// emit generic constraints
+			foreach (var constraint in genericConstraints)
+			{
+#>			<#= constraint #>
+<#
+			}
+#>
 		{
 			return System.Threading.Tasks.Task.Run(() => self.<#= method.Name #><#= genericParameters #>(<#= actualParameters #>));
 		}
@@ -77,31 +111,79 @@
 <#
 			}
 #>	}
-} // <#= type.Namespace #>.Client.<#= type.Name #>AsyncExtensions
+} // <#= GetClientNamespace(type) #>.<#= type.Name #>AsyncExtensions
 
 <#
 		}
 	}
 #>
 <#+
-	public string GetTypeName(Type type)
+	internal string GetTypeName(Type type)
 	{
-		if (type == null)
+		if (type.IsGenericType)
 		{
-			return string.Empty;
+			var typeArguments = string.Join(", ", type.GetGenericArguments().Select(x => GetTypeName(x)));
+			return Regex.Replace(type.GetGenericTypeDefinition().FullName, @"`.+$", "") + "<" + typeArguments + ">";
 		}
 
-		if (!type.IsGenericType)
+		if (type.IsArray)
 		{
-			return type.FullName ?? type.Name;
+			var rank = new string(',', type.GetArrayRank() - 1);
+			return GetTypeName(type.GetElementType()) + "[" + rank + "]";
 		}
 
-		var typeArguments = string.Join(", ", type.GetGenericArguments().Select(x => GetTypeName(x)));
-		return Regex.Replace(type.GetGenericTypeDefinition().FullName, @"`.+$", "") + "<" + typeArguments + ">";
+		return (type.FullName ?? type.Name).Replace("+", ".");
 	}
 
-	public string GetTypeName<T>()
+	private string GetTypeConstraints(Type type)
 	{
-		return GetTypeName(typeof(T));
+		var constraints = type
+			.GetGenericParameterConstraints()
+			.Where(t => t != typeof(ValueType))
+			.Select(t => t.Name)
+			.ToList();
+
+		var attrs = type.GenericParameterAttributes;
+		if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0)
+		{
+			constraints.Insert(0, "class");
+		}
+
+		if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
+		{
+			constraints.Insert(0, "struct");
+		}
+
+		if ((attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0 &&
+			(attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) == 0)
+		{
+			constraints.Add("new()");
+		}
+
+		if (constraints.Any())
+		{
+			return "where " + type.Name + " : " + string.Join(", ", constraints);
+		}
+
+		return null;
+	}
+
+	private string GetClientNamespace(Type type)
+	{
+		return type.Namespace;
+	}
+
+	private IEnumerable<Type> GetTypes(Assembly asm)
+	{
+		try
+		{
+			return asm.GetTypes();
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Trace.WriteLine("T4", "Cannot load types because of exception: {0}" + ex.ToString());
+		}
+
+		return Enumerable.Empty<Type>();
 	}
 #>
