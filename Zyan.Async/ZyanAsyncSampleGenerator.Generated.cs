@@ -87,6 +87,24 @@ namespace Zyan.Async.TestInterfaces
 			return System.Threading.Tasks.Task.Run(() => self.ConvertToStrings(ints));
 		}
 
+		// System.String[,,,] MultidimensionalArrayExample(Int32[,,])
+		public static System.Threading.Tasks.Task<System.String[,,,]> MultidimensionalArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Int32[,,] a)
+		{
+			return System.Threading.Tasks.Task.Run(() => self.MultidimensionalArrayExample(a));
+		}
+
+		// Int32[][] JaggedArrayExample(System.String[][][])
+		public static System.Threading.Tasks.Task<System.Int32[][]> JaggedArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.String[][][] x)
+		{
+			return System.Threading.Tasks.Task.Run(() => self.JaggedArrayExample(x));
+		}
+
+		// System.Collections.Generic.Dictionary`2[System.String,System.Collections.Generic.Dictionary`2[System.String,System.Int32]][] MixedArrayExample(System.Nullable`1[System.Int32][])
+		public static System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<System.String, System.Collections.Generic.Dictionary<System.String, System.Int32>>[]> MixedArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Nullable<System.Int32>[] arg)
+		{
+			return System.Threading.Tasks.Task.Run(() => self.MixedArrayExample(arg));
+		}
+
 	}
 } // Zyan.Async.TestInterfaces.INonGenericMethodsAsyncExtensions
 

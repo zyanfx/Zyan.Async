@@ -61,5 +61,35 @@ namespace Zyan.Async.Tests
 				List<string> t = await self.ConvertToStringsAsync(null); // TODO: add default value support
 			});
 		}
+
+		[Fact]
+		public void MultidimensionalArrayTypesAreSupported()
+		{
+			Check(async (self) =>
+			{
+				var multidimensional = new int [1, 2, 3];
+				string[, , ,] result = await self.MultidimensionalArrayExampleAsync(multidimensional);
+			});
+		}
+
+		[Fact]
+		public void JaggedArrayTypesAreSupported()
+		{
+			Check(async (self) =>
+			{
+				var jagged = new string[1][][];
+				int[][] result = await self.JaggedArrayExampleAsync(jagged);
+			});
+		}
+
+		[Fact]
+		public void MixedGenerixArrayTypesAreSupported()
+		{
+			Check(async (self) =>
+			{
+				var nullableIntArray = new[] { (int?)1, 0, null };
+				Dictionary<string, Dictionary<string,int>>[] result = await self.MixedArrayExampleAsync(nullableIntArray);
+			});
+		}
 	}
 }

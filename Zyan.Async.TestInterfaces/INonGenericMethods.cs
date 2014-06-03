@@ -18,5 +18,11 @@ namespace Zyan.Async.TestInterfaces
 		object CreateMessage(string format = "", params object[] args);
 
 		List<string> ConvertToStrings(IEnumerable<int> ints = null);
+
+		string[, , ,] MultidimensionalArrayExample(int[, ,] a);
+
+		int[][] JaggedArrayExample(string[][][] x);
+
+		Dictionary<string, Dictionary<string, int>>[] MixedArrayExample(int?[] arg);
 	}
 }
