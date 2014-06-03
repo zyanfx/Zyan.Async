@@ -17,6 +17,8 @@ namespace Zyan.Async.TestInterfaces
 
 		List<Dictionary<T, HashSet<R>>> GenericMethod4<T, R>(Func<R, T> func);
 
-		IQueryable<T> GetQuery<T>();
+		IEnumerable<T> GetEnumerable<T>() where T : struct;
+
+		IQueryable<T> GetQuery<T>() where T : class, IDisposable, new();
 	}
 }

@@ -300,10 +300,15 @@ namespace Zyan.Async
 
 	internal string GetTypeName(Type type)
 	{
+		if (type == null)
+		{
+			return string.Empty;
+		}
+
 		if (type.IsGenericType)
 		{
-	        var typeArguments = string.Join(", ", type.GetGenericArguments().Select(x => GetTypeName(x)));
-    	    return Regex.Replace(type.GetGenericTypeDefinition().FullName, @"`.+$", "") + "<" + typeArguments + ">";
+			var typeArguments = string.Join(", ", type.GetGenericArguments().Select(x => GetTypeName(x)));
+			return Regex.Replace(type.GetGenericTypeDefinition().FullName, @"`.+$", "") + "<" + typeArguments + ">";
 		}
 
 		if (type.IsArray)
@@ -320,7 +325,7 @@ namespace Zyan.Async
 		var constraints = type
 			.GetGenericParameterConstraints()
 			.Where(t => t != typeof(ValueType))
-			.Select(t => t.Name)
+			.Select(t => GetTypeName(t))
 			.ToList();
 
 		var attrs = type.GenericParameterAttributes;

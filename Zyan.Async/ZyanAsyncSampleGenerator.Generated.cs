@@ -33,8 +33,16 @@ namespace Zyan.Async.TestInterfaces
 			return System.Threading.Tasks.Task.Run(() => self.GenericMethod4<T, R>(func));
 		}
 
+		// System.Collections.Generic.IEnumerable`1[T] GetEnumerable[T]()
+		public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<T>> GetEnumerableAsync<T>(this Zyan.Async.TestInterfaces.IGenericMethods self)
+			where T : struct
+		{
+			return System.Threading.Tasks.Task.Run(() => self.GetEnumerable<T>());
+		}
+
 		// System.Linq.IQueryable`1[T] GetQuery[T]()
 		public static System.Threading.Tasks.Task<System.Linq.IQueryable<T>> GetQueryAsync<T>(this Zyan.Async.TestInterfaces.IGenericMethods self)
+			where T : class, System.IDisposable, new()
 		{
 			return System.Threading.Tasks.Task.Run(() => self.GetQuery<T>());
 		}

@@ -120,6 +120,11 @@
 <#+
 	internal string GetTypeName(Type type)
 	{
+		if (type == null)
+		{
+			return string.Empty;
+		}
+
 		if (type.IsGenericType)
 		{
 			var typeArguments = string.Join(", ", type.GetGenericArguments().Select(x => GetTypeName(x)));
@@ -140,7 +145,7 @@
 		var constraints = type
 			.GetGenericParameterConstraints()
 			.Where(t => t != typeof(ValueType))
-			.Select(t => t.Name)
+			.Select(t => GetTypeName(t))
 			.ToList();
 
 		var attrs = type.GenericParameterAttributes;

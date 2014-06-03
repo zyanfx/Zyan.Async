@@ -10,7 +10,7 @@ namespace Zyan.Async.Tests
 {
 	public class NonGenericMethodsTests
 	{
-		private void Check<T>(Action<T> action)
+		private void Check(Action<INonGenericMethods> action)
 		{
 			Assert.NotNull(action);
 		}
@@ -18,13 +18,13 @@ namespace Zyan.Async.Tests
 		[Fact]
 		public void VoidConvertsToTask()
 		{
-			Check<INonGenericMethods>(self => self.StartAsync());
+			Check(self => self.StartAsync());
 		}
 
 		[Fact]
-		public void IntConvertsToTaskInt()
+		public void ReturnTypeConvertsToTaskType()
 		{
-			Check<INonGenericMethods>(async (self) =>
+			Check(async (self) =>
 			{
 				int i = await self.GetValueAsync();
 				Task<int> t = self.GetValueAsync();
@@ -34,7 +34,7 @@ namespace Zyan.Async.Tests
 		[Fact(Skip = "Not yet implemented")]
 		public void DefaultParameterValuesArePreserved()
 		{
-			Check<INonGenericMethods>(async (self) =>
+			Check(async (self) =>
 			{
 				string a = await self.GenerateNameAsync(1, 1.0m);
 				//string b = await self.GenerateNameAsync(1); // TODO: add default value support
@@ -44,7 +44,7 @@ namespace Zyan.Async.Tests
 		[Fact]
 		public void ParamArrayAttributeIsSupported()
 		{
-			Check<INonGenericMethods>(async (self) =>
+			Check(async (self) =>
 			{
 				var a = await self.CreateMessageAsync("format1", 1, 2, 3);
 				var b = await self.CreateMessageAsync(null, null);
@@ -55,7 +55,7 @@ namespace Zyan.Async.Tests
 		[Fact]
 		public void GenericTypesAreSupported()
 		{
-			Check<INonGenericMethods>(async (self) =>
+			Check(async (self) =>
 			{
 				List<string> r = await self.ConvertToStringsAsync(new[] { 1, 2, 3 });
 				List<string> t = await self.ConvertToStringsAsync(null); // TODO: add default value support
