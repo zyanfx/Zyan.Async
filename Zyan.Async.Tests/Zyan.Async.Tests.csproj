@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="GenericMethodTests.cs" />
     <Compile Include="GetNameTests.cs" />
+    <Compile Include="GetTypeConstraintsTests.cs" />
     <Compile Include="NonGenericMethodTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
