@@ -25,7 +25,6 @@
 
 	Func<Type, bool> typeFilter = t =>
 		t.IsInterface && 
-		!t.IsGenericType && 
 		!Regex.IsMatch(t.Name, typeIgnoreList) &&
 		!System.Attribute.IsDefined(t, typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute)) &&
 		t.GetMethods().Any(m => !Regex.IsMatch(m.Name, methodIgnoreList));
@@ -50,7 +49,7 @@
 	/// <summary>
 	/// Asynchronous extension methods for the <see cref="<#= type.FullName #>" /> interface.
 	/// </summary>
-	public static class <#= type.Name #>AsyncExtensions
+	public static class <#= GetNonGenericTypeName(type.Name) #>AsyncExtensions
 	{
 <#
 			// create asynchronous extension method for every synchronous method
@@ -75,10 +74,23 @@
 
 				var genericParameters = string.Empty;
 				var genericConstraints = Enumerable.Empty<string>();
+				var genericArguments = Enumerable.Empty<Type>();
+				var methodGenericParameters = string.Empty;
+				if (method.DeclaringType.IsGenericType)
+				{
+					genericArguments = method.DeclaringType.GetGenericTypeDefinition().GetGenericArguments().AsEnumerable();
+				}
+
 				if (method.IsGenericMethod)
 				{
-					genericParameters = "<" + string.Join(", ", method.GetGenericArguments().Select(t => GetTypeName(t))) + ">";
-					genericConstraints = method.GetGenericArguments().Select(t => GetTypeConstraints(t)).Where(c => c != null);
+					genericArguments = genericArguments.Concat(method.GetGenericArguments());
+					methodGenericParameters = "<" + string.Join(", ", method.GetGenericArguments().Select(t => GetTypeName(t))) + ">";;
+				}
+
+				if (genericArguments.Any())
+				{
+					genericParameters = "<" + string.Join(", ", genericArguments.Select(t => GetTypeName(t))) + ">";
+					genericConstraints = genericArguments.Select(t => GetTypeConstraints(t)).Where(c => c != null);
 				}
 
 				var parameters = string.Join(", ", method.GetParameters().Select(p =>
@@ -101,7 +113,7 @@
 				var actualParameters = string.Join(", ", method.GetParameters().Select(p => p.Name));
 
 #>		// <#= method #>
-		public static <#= GetTypeName(returnType) #> <#= method.Name #>Async<#= genericParameters #>(this <#= type.FullName #> self<#= parameters#>)
+		public static <#= GetTypeName(returnType) #> <#= method.Name #>Async<#= genericParameters #>(this <#= GetTypeName(type) #> self<#= parameters#>)
 <# 
 			// emit generic constraints
 			foreach (var constraint in genericConstraints)
@@ -111,13 +123,13 @@
 			}
 #>
 		{
-			return System.Threading.Tasks.Task.Run(() => self.<#= method.Name #><#= genericParameters #>(<#= actualParameters #>));
+			return System.Threading.Tasks.Task.Run(() => self.<#= method.Name #><#= methodGenericParameters #>(<#= actualParameters #>));
 		}
 
 <#
 			}
 #>	}
-} // <#= GetClientNamespace(type) #>.<#= type.Name #>AsyncExtensions
+} // <#= GetClientNamespace(type) #>.<#= GetNonGenericTypeName(type.Name) #>AsyncExtensions
 
 <#
 		}
@@ -144,6 +156,11 @@
 		}
 
 		return (type.FullName ?? type.Name).Replace("+", ".");
+	}
+
+	internal string GetNonGenericTypeName(string typeName)
+	{
+		return Regex.Replace(typeName, @"`.+$", "");
 	}
 
 	internal string GetTypeConstraints(Type type)

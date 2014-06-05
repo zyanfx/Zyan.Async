@@ -42,6 +42,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GenericInterfaceTests.cs" />
     <Compile Include="GenericMethodTests.cs" />
     <Compile Include="GetNameTests.cs" />
     <Compile Include="GetTypeConstraintsTests.cs" />
