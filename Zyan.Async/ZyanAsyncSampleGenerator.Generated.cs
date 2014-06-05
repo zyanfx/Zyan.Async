@@ -28,7 +28,7 @@ namespace Zyan.Async.TestInterfaces
 		}
 
 		// System.Collections.Generic.List`1[System.Collections.Generic.Dictionary`2[T,System.Collections.Generic.HashSet`1[R]]] GenericMethod4[T,R](System.Func`2[R,T])
-		public static System.Threading.Tasks.Task<System.Collections.Generic.List<System.Collections.Generic.Dictionary<T, System.Collections.Generic.HashSet<R>>>> GenericMethod4Async<T, R>(this Zyan.Async.TestInterfaces.IGenericMethods self, System.Func<R, T> func)
+		public static System.Threading.Tasks.Task<System.Collections.Generic.List<System.Collections.Generic.Dictionary<T, System.Collections.Generic.HashSet<R>>>> GenericMethod4Async<T, R>(this Zyan.Async.TestInterfaces.IGenericMethods self, System.Func<R, T> func = null)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.GenericMethod4<T, R>(func));
 		}
@@ -70,19 +70,19 @@ namespace Zyan.Async.TestInterfaces
 		}
 
 		// System.String GenerateName(Int32, System.Decimal)
-		public static System.Threading.Tasks.Task<System.String> GenerateNameAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Int32 a, System.Decimal b)
+		public static System.Threading.Tasks.Task<System.String> GenerateNameAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Int32 a, System.Decimal b = 1.0M)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.GenerateName(a, b));
 		}
 
 		// System.Object CreateMessage(System.String, System.Object[])
-		public static System.Threading.Tasks.Task<System.Object> CreateMessageAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.String format, params System.Object[] args)
+		public static System.Threading.Tasks.Task<System.Object> CreateMessageAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.String format = @"", params System.Object[] args)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.CreateMessage(format, args));
 		}
 
 		// System.Collections.Generic.List`1[System.String] ConvertToStrings(System.Collections.Generic.IEnumerable`1[System.Int32])
-		public static System.Threading.Tasks.Task<System.Collections.Generic.List<System.String>> ConvertToStringsAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Collections.Generic.IEnumerable<System.Int32> ints)
+		public static System.Threading.Tasks.Task<System.Collections.Generic.List<System.String>> ConvertToStringsAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Collections.Generic.IEnumerable<System.Int32> ints = null)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.ConvertToStrings(ints));
 		}

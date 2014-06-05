@@ -31,13 +31,13 @@ namespace Zyan.Async.Tests
 			});
 		}
 
-		[Fact(Skip = "Not yet implemented")]
+		[Fact]
 		public void DefaultParameterValuesArePreserved()
 		{
 			Check(async (self) =>
 			{
 				string a = await self.GenerateNameAsync(1, 1.0m);
-				//string b = await self.GenerateNameAsync(1); // TODO: add default value support
+				string b = await self.GenerateNameAsync(1);
 			});
 		}
 
@@ -58,7 +58,7 @@ namespace Zyan.Async.Tests
 			Check(async (self) =>
 			{
 				List<string> r = await self.ConvertToStringsAsync(new[] { 1, 2, 3 });
-				List<string> t = await self.ConvertToStringsAsync(null); // TODO: add default value support
+				List<string> t = await self.ConvertToStringsAsync();
 			});
 		}
 

@@ -50,6 +50,7 @@ namespace Zyan.Async.Tests
 				List<Dictionary<int, HashSet<string>>> a = await self.GenericMethod4Async<int, string>(x => x.Length);
 				List<Dictionary<string, HashSet<int>>> b = await self.GenericMethod4Async(new Func<int, string>(x => x.ToString()));
 				List<Dictionary<short, HashSet<byte>>> c = await self.GenericMethod4Async((byte x) => (short)x);
+				List<Dictionary<int, HashSet<string>>> d = await self.GenericMethod4Async<int, string>();
 			});
 		}
 

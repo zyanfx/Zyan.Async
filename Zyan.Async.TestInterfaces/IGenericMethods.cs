@@ -15,7 +15,7 @@ namespace Zyan.Async.TestInterfaces
 
 		IList<T> GenericMethod3<T>(Dictionary<string, T> parameters);
 
-		List<Dictionary<T, HashSet<R>>> GenericMethod4<T, R>(Func<R, T> func);
+		List<Dictionary<T, HashSet<R>>> GenericMethod4<T, R>(Func<R, T> func = null);
 
 		IEnumerable<T> GetEnumerable<T>() where T : struct;
 
