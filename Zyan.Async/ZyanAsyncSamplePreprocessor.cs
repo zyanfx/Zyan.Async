@@ -53,7 +53,6 @@ namespace Zyan.Async
 
 	Func<Type, bool> typeFilter = t =>
 		t.IsInterface && 
-		//!t.IsGenericType && 
 		!Regex.IsMatch(t.Name, typeIgnoreList) &&
 		!System.Attribute.IsDefined(t, typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute)) &&
 		t.GetMethods().Any(m => !Regex.IsMatch(m.Name, methodIgnoreList));
@@ -74,14 +73,14 @@ namespace Zyan.Async
             #line hidden
             this.Write("// Assembly name: ");
             
-            #line 43 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 42 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(asm.FullName));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 44 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 43 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 		// emit extension class for each interface
 		foreach (var type in GetTypes(asm).Where(typeFilter))
@@ -92,28 +91,28 @@ namespace Zyan.Async
             #line hidden
             this.Write("namespace ");
             
-            #line 48 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 47 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetClientNamespace(type)));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n\t/// <summary>\r\n\t/// Asynchronous extension methods for the <see cref=\"");
             
-            #line 51 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 50 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(type.FullName));
             
             #line default
             #line hidden
             this.Write("\" /> interface.\r\n\t/// </summary>\r\n\tpublic static class ");
             
-            #line 53 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 52 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetNonGenericTypeName(type.Name)));
             
             #line default
             #line hidden
             this.Write("AsyncExtensions\r\n\t{\r\n");
             
-            #line 55 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 54 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 			// create asynchronous extension method for every synchronous method
 			foreach (var method in type.GetMethods().Where(m => !Regex.IsMatch(m.Name, methodIgnoreList)))
@@ -181,49 +180,49 @@ namespace Zyan.Async
             #line hidden
             this.Write("\t\t// ");
             
-            #line 116 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 115 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(method));
             
             #line default
             #line hidden
             this.Write("\r\n\t\tpublic static ");
             
-            #line 117 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 116 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetTypeName(returnType)));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 117 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 116 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             this.Write("Async");
             
-            #line 117 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 116 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(genericParameters));
             
             #line default
             #line hidden
             this.Write("(this ");
             
-            #line 117 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 116 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetTypeName(type)));
             
             #line default
             #line hidden
             this.Write(" self");
             
-            #line 117 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 116 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(parameters));
             
             #line default
             #line hidden
             this.Write(")\r\n");
             
-            #line 118 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 117 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
  
 			// emit generic constraints
 			foreach (var constraint in genericConstraints)
@@ -234,14 +233,14 @@ namespace Zyan.Async
             #line hidden
             this.Write("\t\t\t");
             
-            #line 122 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 121 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(constraint));
             
             #line default
             #line hidden
             this.Write("\r\n");
             
-            #line 123 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 122 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 			}
 
@@ -250,27 +249,27 @@ namespace Zyan.Async
             #line hidden
             this.Write("\t\t{\r\n\t\t\treturn System.Threading.Tasks.Task.Run(() => self.");
             
-            #line 127 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 126 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             
-            #line 127 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 126 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(methodGenericParameters));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 127 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 126 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(actualParameters));
             
             #line default
             #line hidden
             this.Write("));\r\n\t\t}\r\n\r\n");
             
-            #line 130 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 129 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 			}
 
@@ -279,21 +278,21 @@ namespace Zyan.Async
             #line hidden
             this.Write("\t}\r\n} // ");
             
-            #line 133 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 132 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetClientNamespace(type)));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 133 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 132 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetNonGenericTypeName(type.Name)));
             
             #line default
             #line hidden
             this.Write("AsyncExtensions\r\n\r\n");
             
-            #line 135 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 134 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 		}
 	}
@@ -315,7 +314,7 @@ namespace Zyan.Async
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 139 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+        #line 138 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 	internal string GetTypeName(Type type)
 	{
@@ -377,10 +376,15 @@ namespace Zyan.Async
 		return null;
 	}
 
-	internal string GetValueLiteral(object value)
+	internal string GetValueLiteral(object value, Type type = null)
 	{
 		if (value == null)
 		{
+			if (type != null && type.IsValueType)
+			{
+				return string.Format("default({0})", GetTypeName(type));
+			}
+
 			return "null";
 		}
 

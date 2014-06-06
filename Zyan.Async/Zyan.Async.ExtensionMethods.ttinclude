@@ -98,7 +98,7 @@
 					var defaultValue = string.Empty;
 					if (p.HasDefaultValue)
 					{
-						defaultValue = " = " + GetValueLiteral(p.DefaultValue);
+						defaultValue = " = " + GetValueLiteral(p.DefaultValue, p.ParameterType);
 					}
 
 					return (Attribute.IsDefined(p, typeof(ParamArrayAttribute)) ? "params " : string.Empty) +
@@ -196,10 +196,15 @@
 		return null;
 	}
 
-	internal string GetValueLiteral(object value)
+	internal string GetValueLiteral(object value, Type type = null)
 	{
 		if (value == null)
 		{
+			if (type != null && type.IsValueType)
+			{
+				return string.Format("default({0})", GetTypeName(type));
+			}
+
 			return "null";
 		}
 

@@ -42,31 +42,31 @@ namespace Zyan.Async.TestInterfaces
 			return System.Threading.Tasks.Task.Run(() => self.GenericMethod4<R>(func));
 		}
 
-		// System.Collections.Generic.IEnumerable`1[T] GetEnumerable[R]()
-		public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<T>> GetEnumerableAsync<T, U, R>(this Zyan.Async.TestInterfaces.IGenericInterface<T, U> self)
+		// System.Collections.Generic.IEnumerable`1[T] GetEnumerable[R](R)
+		public static System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<T>> GetEnumerableAsync<T, U, R>(this Zyan.Async.TestInterfaces.IGenericInterface<T, U> self, R param = default(R))
 			where T : class
 			where U : new()
 			where R : struct
 		{
-			return System.Threading.Tasks.Task.Run(() => self.GetEnumerable<R>());
+			return System.Threading.Tasks.Task.Run(() => self.GetEnumerable<R>(param));
 		}
 
-		// System.Linq.IQueryable`1[U] GetQuery[R]()
-		public static System.Threading.Tasks.Task<System.Linq.IQueryable<U>> GetQueryAsync<T, U, R>(this Zyan.Async.TestInterfaces.IGenericInterface<T, U> self)
+		// System.Linq.IQueryable`1[U] GetQuery[R](R)
+		public static System.Threading.Tasks.Task<System.Linq.IQueryable<U>> GetQueryAsync<T, U, R>(this Zyan.Async.TestInterfaces.IGenericInterface<T, U> self, R param = null)
 			where T : class
 			where U : new()
 			where R : System.IO.Stream, new()
 		{
-			return System.Threading.Tasks.Task.Run(() => self.GetQuery<R>());
+			return System.Threading.Tasks.Task.Run(() => self.GetQuery<R>(param));
 		}
 
-		// System.Collections.Generic.ICollection`1[R] GetCollection[R]()
-		public static System.Threading.Tasks.Task<System.Collections.Generic.ICollection<R>> GetCollectionAsync<T, U, R>(this Zyan.Async.TestInterfaces.IGenericInterface<T, U> self)
+		// System.Collections.Generic.ICollection`1[R] GetCollection[R](R)
+		public static System.Threading.Tasks.Task<System.Collections.Generic.ICollection<R>> GetCollectionAsync<T, U, R>(this Zyan.Async.TestInterfaces.IGenericInterface<T, U> self, R param = null)
 			where T : class
 			where U : new()
 			where R : class, System.IDisposable, new()
 		{
-			return System.Threading.Tasks.Task.Run(() => self.GetCollection<R>());
+			return System.Threading.Tasks.Task.Run(() => self.GetCollection<R>(param));
 		}
 
 	}

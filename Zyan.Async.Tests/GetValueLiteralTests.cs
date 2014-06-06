@@ -11,6 +11,10 @@ namespace Zyan.Async.Tests
 	{
 		ZyanAsyncSamplePreprocessor codeGen = new ZyanAsyncSamplePreprocessor();
 
+		private void SampleMethod<R>(R param = default(R)) where R : struct
+		{ 
+		}
+
 		[Fact]
 		public void GetTrivialLiteralsWorksFine()
 		{
@@ -18,6 +22,11 @@ namespace Zyan.Async.Tests
 			Assert.Equal("true", codeGen.GetValueLiteral(true));
 			Assert.Equal("false", codeGen.GetValueLiteral(false));
 			Assert.Equal("System.DayOfWeek.Saturday", codeGen.GetValueLiteral(DayOfWeek.Saturday));
+			Assert.Equal("default(System.Int32)", codeGen.GetValueLiteral(null, typeof(int)));
+			Assert.Equal("default(System.DateTime)", codeGen.GetValueLiteral(null, typeof(DateTime)));
+
+			var type = new Action<int>(SampleMethod<int>).Method.GetGenericMethodDefinition().GetGenericArguments().First();
+			Assert.Equal("default(R)", codeGen.GetValueLiteral(null, type));
 		}
 
 		[Fact]

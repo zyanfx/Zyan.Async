@@ -18,10 +18,10 @@ namespace Zyan.Async.TestInterfaces
 
 		List<Dictionary<T, HashSet<R>>> GenericMethod4<R>(Func<T, U> func) where R : IDisposable;
 
-		IEnumerable<T> GetEnumerable<R>() where R : struct;
+		IEnumerable<T> GetEnumerable<R>(R param = default(R)) where R : struct;
 
-		IQueryable<U> GetQuery<R>() where R : Stream, new();
+		IQueryable<U> GetQuery<R>(R param = default(R)) where R : Stream, new();
 
-		ICollection<R> GetCollection<R>() where R : class, IDisposable, new();
+		ICollection<R> GetCollection<R>(R param = default(R)) where R : class, IDisposable, new();
 	}
 }
