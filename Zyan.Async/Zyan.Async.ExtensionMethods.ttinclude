@@ -1,8 +1,16 @@
 ﻿<#
 // Extension method generator.
+// https://github.com/yallie/Zyan.Async
 //
-// Inspects all loaded assemblies, extracts interface types.
-// For every interface creates static class with asynchronous extension methods.
+// Inspects loaded assemblies, extracts all types mathing the given filter.
+// Creates static class with asynchronous extension methods for every inspected type.
+//
+// Template parameters:
+// 
+// * AssemblyIgnoreList — regular expression of assemblies to ignore, e.g: @"^(mscorlib|System)$"
+// * TypeIgnoreList — regular expression of types to ignore, e.g: @"^(Microsoft\.VisualStudio\.TextTemplating)"
+// * MethodIgnoreList — regular expression of methods to ignore, e.g.: @"^(get_|set_|add_|remove_)"
+// * TypeFilter — predicate used to filter out the unneeded types, e.g.: t => !Regex.IsMatch(t.Name, TypeIgnoreList)
 #>
 <#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
@@ -18,21 +26,10 @@
 #pragma warning disable 1591
 
 <#
-	// ignore lists
-	var asmIgnoreList = "^(mscorlib|Microsoft|System|WindowsBase|EnvDTE|Accessibility|UltimaLib|Zyan.Communication)";
-	var typeIgnoreList = "^(Microsoft.VisualStudio.TextTemplating)";
-	var methodIgnoreList = "^(get_|set_|add_|remove)";
-
-	Func<Type, bool> typeFilter = t =>
-		t.IsInterface && 
-		!Regex.IsMatch(t.Name, typeIgnoreList) &&
-		!System.Attribute.IsDefined(t, typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute)) &&
-		t.GetMethods().Any(m => !Regex.IsMatch(m.Name, methodIgnoreList));
-
 	// get loaded assemblies containing interfaces
 	var asms =
 		from asm in AppDomain.CurrentDomain.GetAssemblies()
-		where !Regex.IsMatch(asm.GetName().Name, asmIgnoreList) && GetTypes(asm).Any(typeFilter)
+		where !Regex.IsMatch(asm.GetName().Name, AssemblyIgnoreList) && GetTypes(asm).Any(TypeFilter)
 		orderby asm.FullName
 		select asm;
 
@@ -42,7 +39,7 @@
 		#>// Assembly name: <#= asm.FullName #>
 <#
 		// emit extension class for each interface
-		foreach (var type in GetTypes(asm).Where(typeFilter))
+		foreach (var type in GetTypes(asm).Where(TypeFilter))
 		{
 #>namespace <#= GetClientNamespace(type) #>
 {
@@ -136,6 +133,50 @@
 	}
 #>
 <#+
+	// Template parameters
+
+	private string assemblyIgnoreList = @"^(mscorlib|Microsoft|System|WindowsBase|EnvDTE|Accessibility|UltimaLib|Zyan.Communication)";
+	private string typeIgnoreList = @"^(Microsoft\.VisualStudio\.TextTemplating)";
+	private string methodIgnoreList = @"^(get_|set_|add_|remove_)";
+	private Func<Type, bool> typeFilter;
+
+	public string AssemblyIgnoreList
+	{
+		get { return assemblyIgnoreList; }
+		set { assemblyIgnoreList = value; }
+	}
+
+	public string TypeIgnoreList
+	{
+		get { return typeIgnoreList; }
+		set { typeIgnoreList = value; }
+	}
+
+	public string MethodIgnoreList
+	{
+		get { return methodIgnoreList; }
+		set { methodIgnoreList = value; }
+	}
+
+	public Func<Type, bool> TypeFilter
+	{
+		get
+		{
+			if (typeFilter == null)
+			{
+				typeFilter = t => t.IsInterface && 
+					!Regex.IsMatch(t.Name, TypeIgnoreList) &&
+					!System.Attribute.IsDefined(t, typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute)) &&
+					t.GetMethods().Any(m => !Regex.IsMatch(m.Name, MethodIgnoreList));
+			}
+
+			return typeFilter;
+		}
+		set { typeFilter = value; }
+	}
+
+	// Utility methods
+
 	internal string GetTypeName(Type type)
 	{
 		if (type == null)

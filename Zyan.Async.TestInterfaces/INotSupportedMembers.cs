@@ -40,3 +40,16 @@ namespace Zyan.Async.TestInterfaces
 		void Dummy();
 	}
 }
+
+// Events:
+// async Task SubscribeStartedAsync(EventHandler<CancelEventArgs> handler)
+// async Task UnsubscribeStartedAsync(EventHandler<CancelEventArgs> handler)
+
+// Properties:
+// async Task<string> GetNameAsync()
+// async Task SetNameAsync(string name)
+
+// Indexers:
+// async Task<string> GetItem(int index)
+// async Task<object> GetItem(string name, int index, object tag = null);
+// async Task SetItem(string name, int index, object tag = null, object value);
