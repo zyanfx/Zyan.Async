@@ -22,10 +22,8 @@
 <#@ import namespace="System.Threading.Tasks" #>
 <#@ import namespace="System.Reflection" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ output extension=".Generated.cs" #>
-// Rewriting XML comments is not supported
-#pragma warning disable 1591
-
+<#@ output extension=".log" #>
+<#@ include file="Zyan.Async.MultipleOutputHelper.ttinclude" #>
 <#
 	// get loaded assemblies containing interfaces
 	var asms =
@@ -34,16 +32,30 @@
 		orderby asm.FullName
 		select asm;
 
+	// create Manager to output multiple files
+	var manager = Manager.Create(Host, GenerationEnvironment);
+
 	// process every assembly containing interfaces
 	foreach (var asm in asms)
 	{
-		#>// Assembly name: <#= asm.FullName #>
+		#>Processing assembly: <#= asm.FullName #>
 <#
 		// emit extension class for each interface
 		foreach (var type in GetTypes(asm).Where(TypeFilter))
 		{
-#>namespace <#= GetClientNamespace(type) #>
+			#>	Processing type: <#= type.FullName #>
+<#
+			// prepare output filename
+			var fileName = GetClientNamespace(type) + "." + GetNonGenericTypeName(type.Name) + "AsyncExtensions.cs";
+			fileName = Path.ChangeExtension(Host.TemplateFile, fileName);
+			manager.StartNewFile(fileName);
+
+#>// Assembly name: <#= asm.FullName #>
+namespace <#= GetClientNamespace(type) #>
 {
+	// Rewriting XML comments is not supported
+	#pragma warning disable 1591
+
 	/// <summary>
 	/// Asynchronous extension methods for the <see cref="<#= type.FullName #>" /> interface.
 	/// </summary>
@@ -129,9 +141,14 @@
 #>	}
 } // <#= GetClientNamespace(type) #>.<#= GetNonGenericTypeName(type.Name) #>AsyncExtensions
 
-<#
+<#			// close the current file
+			manager.EndBlock();
 		}
 	}
+
+// Generate output, split file into sections
+manager.Process(true);
+
 #>
 <#+
 	// Template parameters

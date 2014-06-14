@@ -1,0 +1,5 @@
+﻿Processing assembly: Zyan.Async.TestInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+	Processing type: Zyan.Async.TestInterfaces.IGenericInterface`2
+	Processing type: Zyan.Async.TestInterfaces.IGenericMethods
+	Processing type: Zyan.Async.TestInterfaces.INonGenericMethods
+	Processing type: Zyan.Async.TestInterfaces.INotSupportedMembers
