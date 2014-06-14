@@ -1,7 +1,11 @@
-﻿<#@ include file="Zyan.Async.ExtensionMethods.ttinclude" #><#
-
+﻿<#
 /// --------------------------------------
 /// Add your assemblies here: 
-/// -------------------------------------#>
+/// --------------------------------------
 
-<#@ assembly name="$(SolutionDir)\Zyan.Async.TestInterfaces\bin\Debug\Zyan.Async.TestInterfaces.dll" #>
+Assemblies = new[]
+{
+	@"..\Zyan.Async.TestInterfaces\bin\Debug\Zyan.Async.TestInterfaces.dll",
+};
+
+#><#@ include file="Zyan.Async.ExtensionMethods.ttinclude" #>

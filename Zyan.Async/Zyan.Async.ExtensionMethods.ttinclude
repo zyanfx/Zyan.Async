@@ -12,9 +12,10 @@
 // * MethodIgnoreList — regular expression of methods to ignore, e.g.: @"^(get_|set_|add_|remove_)"
 // * TypeFilter — predicate used to filter out the unneeded types, e.g.: t => !Regex.IsMatch(t.Name, TypeIgnoreList)
 #>
-<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ template debug="false" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
@@ -28,7 +29,7 @@
 <#
 	// get loaded assemblies containing interfaces
 	var asms =
-		from asm in AppDomain.CurrentDomain.GetAssemblies()
+		from asm in Assemblies.Select(GetAssemblyName).Select(File.ReadAllBytes).Select(Assembly.Load)
 		where !Regex.IsMatch(asm.GetName().Name, AssemblyIgnoreList) && GetTypes(asm).Any(TypeFilter)
 		orderby asm.FullName
 		select asm;
@@ -135,10 +136,17 @@
 <#+
 	// Template parameters
 
+	private IEnumerable<string> assemblies = new string[0];
 	private string assemblyIgnoreList = @"^(mscorlib|Microsoft|System|WindowsBase|EnvDTE|Accessibility|UltimaLib|Zyan.Communication)";
 	private string typeIgnoreList = @"^(Microsoft\.VisualStudio\.TextTemplating)";
 	private string methodIgnoreList = @"^(get_|set_|add_|remove_)";
 	private Func<Type, bool> typeFilter;
+
+	public IEnumerable<string> Assemblies
+	{
+		get { return assemblies; }
+		set { assemblies = value ?? new string[0]; }
+	}
 
 	public string AssemblyIgnoreList
 	{
@@ -197,6 +205,21 @@
 		}
 
 		return (type.FullName ?? type.Name).Replace("+", ".");
+	}
+
+	internal string GetAssemblyName(string asmName)
+	{
+		if (!asmName.StartsWith(".") && !asmName.StartsWith(@"\"))
+		{
+			asmName = @"..\" + asmName;
+		}
+
+		if (!File.Exists(asmName))
+		{
+			asmName = Host.ResolvePath(asmName);
+		}
+
+		return asmName;
 	}
 
 	internal string GetNonGenericTypeName(string typeName)
