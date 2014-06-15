@@ -28,7 +28,7 @@ namespace Zyan.Async.TestInterfaces
 		}
 
 		// System.Object CreateMessage(System.String, System.Object[])
-		public static System.Threading.Tasks.Task<object> CreateMessageAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, string format = @"", params object[] args)
+		public static System.Threading.Tasks.Task<object> CreateMessageAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, string format, params object[] args)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.CreateMessage(format, args));
 		}

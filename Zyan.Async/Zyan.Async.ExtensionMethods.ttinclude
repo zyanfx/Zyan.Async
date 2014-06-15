@@ -65,7 +65,7 @@ namespace <#= GetClientNamespace(type) #>
 			// create asynchronous extension method for every synchronous method
 			foreach (var method in type.GetMethods().Where(m => !Regex.IsMatch(m.Name, methodIgnoreList)))
 			{
-				var methodParameters = method.GetParameters();
+				var methodParameters = method.GetParameters().ToArray();
 				if (methodParameters.Any(p => p.IsOut || p.IsRetval || p.ParameterType.IsPointer || p.ParameterType.IsByRef))
 				{
 					// methods with ref/out parameters cannot be async
@@ -103,10 +103,10 @@ namespace <#= GetClientNamespace(type) #>
 					genericConstraints = genericArguments.Select(t => GetTypeConstraints(t)).Where(c => c != null);
 				}
 
-				var parameters = string.Join(", ", method.GetParameters().Select(p =>
+				var parameters = string.Join(", ", methodParameters.Select((p, index) =>
 				{
 					var defaultValue = string.Empty;
-					if (p.HasDefaultValue)
+					if (p.HasDefaultValue && methodParameters.Skip(index).All(a => a.HasDefaultValue))
 					{
 						defaultValue = " = " + GetValueLiteral(p.DefaultValue, p.ParameterType);
 					}
@@ -120,10 +120,10 @@ namespace <#= GetClientNamespace(type) #>
 					parameters = ", " + parameters; 
 				}
 				
-				var actualParameters = string.Join(", ", method.GetParameters().Select(p => p.Name));
+				var actualParameters = string.Join(", ", methodParameters.Select(p => p.Name));
 
 #>		// <#= method #>
-		public static <#= GetTypeName(returnType) #> <#= method.Name #>Async<#= genericParameters #>(this <#= GetTypeName(type) #> self<#= parameters#>)
+		public static <#= GetTypeName(returnType) #> <#= FormatMethodName(method) #><#= genericParameters #>(this <#= GetTypeName(type) #> self<#= parameters#>)
 <# 
 			// emit generic constraints
 			foreach (var constraint in genericConstraints)
@@ -133,7 +133,47 @@ namespace <#= GetClientNamespace(type) #>
 			}
 #>
 		{
-			return System.Threading.Tasks.Task.Run(() => self.<#= method.Name #><#= methodGenericParameters #>(<#= actualParameters #>));
+<#			if (IsPropertyGetAccessor(method))
+			{
+				var property = GetPropertyInfo(method);
+				if (property.GetIndexParameters().Any())
+				{
+					// indexer
+#>			return System.Threading.Tasks.Task.Run(() => self[<#= actualParameters #>]);
+<#
+				}
+				else
+				{
+					// ordinal property
+#>			return System.Threading.Tasks.Task.Run(() => self.<#= property.Name #>);
+<#
+				}
+			}
+			else if (IsPropertySetAccessor(method))
+			{
+				var property = GetPropertyInfo(method);
+				if (property.GetIndexParameters().Any())
+				{
+					// indexer
+					var paramCount = methodParameters.Length - 1;
+					var indexerParameters = string.Join(", ", methodParameters.Take(paramCount).Select(p => p.Name));
+					var indexerValue = methodParameters.Last().Name;
+#>			return System.Threading.Tasks.Task.Run(() => self[<#= indexerParameters #>] = <#= indexerValue #>);
+<#
+				}
+				else
+				{
+					// ordinal property
+#>			return System.Threading.Tasks.Task.Run(() => self.<#= property.Name #> = <#= actualParameters #>);
+<#
+				}
+			}
+			else
+			{
+#>			return System.Threading.Tasks.Task.Run(() => self.<#= method.Name #><#= methodGenericParameters #>(<#= actualParameters #>));
+<#
+			}
+#>
 		}
 
 <#
@@ -155,7 +195,7 @@ manager.Process(true);
 
 	private IEnumerable<string> assemblies = new string[0];
 	private string typeIgnoreList = @"^(Microsoft\.VisualStudio\.TextTemplating)";
-	private string methodIgnoreList = @"^(get_|set_|add_|remove_)";
+	private string methodIgnoreList = @"^(add_|remove_)";
 	private Func<Type, bool> typeFilter;
 
 	public IEnumerable<string> Assemblies
@@ -250,6 +290,36 @@ manager.Process(true);
 			default:
 				return typeName;
 		}
+	}
+
+	internal bool IsPropertySetAccessor(MethodInfo method)
+	{
+		return method.DeclaringType.GetProperties().Any(prop => prop.GetSetMethod() == method);
+	}
+
+	internal bool IsPropertyGetAccessor(MethodInfo method)
+	{
+		return method.DeclaringType.GetProperties().Any(prop => prop.GetGetMethod() == method);
+	}
+
+	internal PropertyInfo GetPropertyInfo(MethodInfo method)
+	{
+		return method.DeclaringType.GetProperties().Single(prop => prop.GetGetMethod() == method || prop.GetSetMethod() == method);
+	}
+
+	internal string FormatMethodName(MethodInfo method)
+	{
+		var methodName = method.Name;
+		if (IsPropertySetAccessor(method))
+		{
+			methodName = "Set" + GetPropertyInfo(method).Name;
+		}
+		else if (IsPropertyGetAccessor(method))
+		{
+			methodName = "Get" + GetPropertyInfo(method).Name;
+		}
+
+		return methodName + "Async";
 	}
 
 	internal string GetAssemblyName(string asmName)

@@ -2,4 +2,4 @@
 	Processing type: Zyan.Async.TestInterfaces.IGenericInterface`2
 	Processing type: Zyan.Async.TestInterfaces.IGenericMethods
 	Processing type: Zyan.Async.TestInterfaces.INonGenericMethods
-	Processing type: Zyan.Async.TestInterfaces.INotSupportedMembers
+	Processing type: Zyan.Async.TestInterfaces.IProperties

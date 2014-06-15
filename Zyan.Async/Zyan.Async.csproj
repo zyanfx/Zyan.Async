@@ -72,7 +72,7 @@
     <Compile Include="ZyanAsyncSampleGenerator.Zyan.Async.TestInterfaces.INonGenericMethodsAsyncExtensions.cs">
       <DependentUpon>ZyanAsyncSampleGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="ZyanAsyncSampleGenerator.Zyan.Async.TestInterfaces.INotSupportedMembersAsyncExtensions.cs">
+    <Compile Include="ZyanAsyncSampleGenerator.Zyan.Async.TestInterfaces.IPropertiesAsyncExtensions.cs">
       <DependentUpon>ZyanAsyncSampleGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="ZyanAsyncSamplePreprocessor.cs">

@@ -46,7 +46,7 @@
     <Compile Include="IGenericInterface.cs" />
     <Compile Include="IGenericMethods.cs" />
     <Compile Include="INonGenericMethods.cs" />
-    <Compile Include="INotSupportedMembers.cs" />
+    <Compile Include="IProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

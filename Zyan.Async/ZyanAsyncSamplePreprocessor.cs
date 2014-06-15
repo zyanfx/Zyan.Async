@@ -170,7 +170,7 @@ Assemblies = new[]
 			// create asynchronous extension method for every synchronous method
 			foreach (var method in type.GetMethods().Where(m => !Regex.IsMatch(m.Name, methodIgnoreList)))
 			{
-				var methodParameters = method.GetParameters();
+				var methodParameters = method.GetParameters().ToArray();
 				if (methodParameters.Any(p => p.IsOut || p.IsRetval || p.ParameterType.IsPointer || p.ParameterType.IsByRef))
 				{
 					// methods with ref/out parameters cannot be async
@@ -208,10 +208,10 @@ Assemblies = new[]
 					genericConstraints = genericArguments.Select(t => GetTypeConstraints(t)).Where(c => c != null);
 				}
 
-				var parameters = string.Join(", ", method.GetParameters().Select(p =>
+				var parameters = string.Join(", ", methodParameters.Select((p, index) =>
 				{
 					var defaultValue = string.Empty;
-					if (p.HasDefaultValue)
+					if (p.HasDefaultValue && methodParameters.Skip(index).All(a => a.HasDefaultValue))
 					{
 						defaultValue = " = " + GetValueLiteral(p.DefaultValue, p.ParameterType);
 					}
@@ -225,7 +225,7 @@ Assemblies = new[]
 					parameters = ", " + parameters; 
 				}
 				
-				var actualParameters = string.Join(", ", method.GetParameters().Select(p => p.Name));
+				var actualParameters = string.Join(", ", methodParameters.Select(p => p.Name));
 
 
             
@@ -248,11 +248,10 @@ Assemblies = new[]
             this.Write(" ");
             
             #line 126 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
-            this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(FormatMethodName(method)));
             
             #line default
             #line hidden
-            this.Write("Async");
             
             #line 126 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(genericParameters));
@@ -300,29 +299,148 @@ Assemblies = new[]
             
             #line default
             #line hidden
-            this.Write("\t\t{\r\n\t\t\treturn System.Threading.Tasks.Task.Run(() => self.");
+            this.Write("\t\t{\r\n");
             
             #line 136 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+			if (IsPropertyGetAccessor(method))
+			{
+				var property = GetPropertyInfo(method);
+				if (property.GetIndexParameters().Any())
+				{
+					// indexer
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\treturn System.Threading.Tasks.Task.Run(() => self[");
+            
+            #line 142 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            this.Write(this.ToStringHelper.ToStringWithCulture(actualParameters));
+            
+            #line default
+            #line hidden
+            this.Write("]);\r\n");
+            
+            #line 143 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+
+				}
+				else
+				{
+					// ordinal property
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\treturn System.Threading.Tasks.Task.Run(() => self.");
+            
+            #line 148 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
+            
+            #line default
+            #line hidden
+            this.Write(");\r\n");
+            
+            #line 149 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+
+				}
+			}
+			else if (IsPropertySetAccessor(method))
+			{
+				var property = GetPropertyInfo(method);
+				if (property.GetIndexParameters().Any())
+				{
+					// indexer
+					var paramCount = methodParameters.Length - 1;
+					var indexerParameters = string.Join(", ", methodParameters.Take(paramCount).Select(p => p.Name));
+					var indexerValue = methodParameters.Last().Name;
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\treturn System.Threading.Tasks.Task.Run(() => self[");
+            
+            #line 161 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            this.Write(this.ToStringHelper.ToStringWithCulture(indexerParameters));
+            
+            #line default
+            #line hidden
+            this.Write("] = ");
+            
+            #line 161 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            this.Write(this.ToStringHelper.ToStringWithCulture(indexerValue));
+            
+            #line default
+            #line hidden
+            this.Write(");\r\n");
+            
+            #line 162 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+
+				}
+				else
+				{
+					// ordinal property
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\treturn System.Threading.Tasks.Task.Run(() => self.");
+            
+            #line 167 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            this.Write(this.ToStringHelper.ToStringWithCulture(property.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" = ");
+            
+            #line 167 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            this.Write(this.ToStringHelper.ToStringWithCulture(actualParameters));
+            
+            #line default
+            #line hidden
+            this.Write(");\r\n");
+            
+            #line 168 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+
+				}
+			}
+			else
+			{
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t\treturn System.Threading.Tasks.Task.Run(() => self.");
+            
+            #line 173 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(method.Name));
             
             #line default
             #line hidden
             
-            #line 136 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 173 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(methodGenericParameters));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 136 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 173 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(actualParameters));
             
             #line default
             #line hidden
-            this.Write("));\r\n\t\t}\r\n\r\n");
+            this.Write("));\r\n");
             
-            #line 139 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 174 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+
+			}
+
+            
+            #line default
+            #line hidden
+            this.Write("\t\t}\r\n\r\n");
+            
+            #line 179 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 			}
 
@@ -331,21 +449,21 @@ Assemblies = new[]
             #line hidden
             this.Write("\t}\r\n} // ");
             
-            #line 142 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 182 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetClientNamespace(type)));
             
             #line default
             #line hidden
             this.Write(".");
             
-            #line 142 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 182 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetNonGenericTypeName(type.Name)));
             
             #line default
             #line hidden
             this.Write("AsyncExtensions\r\n\r\n");
             
-            #line 144 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+            #line 184 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 			// close the current file
 			manager.EndBlock();
 		}
@@ -376,13 +494,13 @@ manager.Process(true);
             }
         }
         
-        #line 153 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
+        #line 193 "D:\Externals\Zyan.Async\Zyan.Async\Zyan.Async.ExtensionMethods.ttinclude"
 
 	// Template parameters
 
 	private IEnumerable<string> assemblies = new string[0];
 	private string typeIgnoreList = @"^(Microsoft\.VisualStudio\.TextTemplating)";
-	private string methodIgnoreList = @"^(get_|set_|add_|remove_)";
+	private string methodIgnoreList = @"^(add_|remove_)";
 	private Func<Type, bool> typeFilter;
 
 	public IEnumerable<string> Assemblies
@@ -477,6 +595,36 @@ manager.Process(true);
 			default:
 				return typeName;
 		}
+	}
+
+	internal bool IsPropertySetAccessor(MethodInfo method)
+	{
+		return method.DeclaringType.GetProperties().Any(prop => prop.GetSetMethod() == method);
+	}
+
+	internal bool IsPropertyGetAccessor(MethodInfo method)
+	{
+		return method.DeclaringType.GetProperties().Any(prop => prop.GetGetMethod() == method);
+	}
+
+	internal PropertyInfo GetPropertyInfo(MethodInfo method)
+	{
+		return method.DeclaringType.GetProperties().Single(prop => prop.GetGetMethod() == method || prop.GetSetMethod() == method);
+	}
+
+	internal string FormatMethodName(MethodInfo method)
+	{
+		var methodName = method.Name;
+		if (IsPropertySetAccessor(method))
+		{
+			methodName = "Set" + GetPropertyInfo(method).Name;
+		}
+		else if (IsPropertyGetAccessor(method))
+		{
+			methodName = "Get" + GetPropertyInfo(method).Name;
+		}
+
+		return methodName + "Async";
 	}
 
 	internal string GetAssemblyName(string asmName)
