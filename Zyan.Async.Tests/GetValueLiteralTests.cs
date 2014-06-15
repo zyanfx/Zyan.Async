@@ -22,7 +22,7 @@ namespace Zyan.Async.Tests
 			Assert.Equal("true", codeGen.GetValueLiteral(true));
 			Assert.Equal("false", codeGen.GetValueLiteral(false));
 			Assert.Equal("System.DayOfWeek.Saturday", codeGen.GetValueLiteral(DayOfWeek.Saturday));
-			Assert.Equal("default(System.Int32)", codeGen.GetValueLiteral(null, typeof(int)));
+			Assert.Equal("default(int)", codeGen.GetValueLiteral(null, typeof(int)));
 			Assert.Equal("default(System.DateTime)", codeGen.GetValueLiteral(null, typeof(DateTime)));
 
 			var type = new Action<int>(SampleMethod<int>).Method.GetGenericMethodDefinition().GetGenericArguments().First();

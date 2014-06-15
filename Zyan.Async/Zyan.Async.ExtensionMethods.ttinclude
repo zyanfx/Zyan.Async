@@ -9,7 +9,7 @@
 // 
 // * Assemblies — list of assembly files to process, relative to the template, e.g: @"..\MyProject\bin\Debug\MyProject.dll"
 // * TypeIgnoreList — regular expression of types to ignore, e.g: @"^(IgnoredTypeName|AnotherIgnoredType)"
-// * MethodIgnoreList — regular expression of methods to ignore, e.g.: @"^(get_|set_|add_|remove_)"
+// * MethodIgnoreList — regular expression of methods to ignore, e.g.: @"^(add_|remove_)"
 // * TypeFilter — predicate used to filter out the unneeded types, e.g.: t => !Regex.IsMatch(t.Name, TypeIgnoreList)
 #>
 <#@ template debug="false" hostspecific="true" language="C#" #>
@@ -214,7 +214,42 @@ manager.Process(true);
 			return GetTypeName(type.GetElementType()) + "[" + rank + "]";
 		}
 
-		return (type.FullName ?? type.Name).Replace("+", ".");
+		var typeName = (type.FullName ?? type.Name).Replace("+", ".");
+		switch (typeName)
+		{
+			case "System.Object":
+				return "object";
+			case "System.String":
+				return "string";
+			case "System.Char":
+				return "char";
+			case "System.Int32":
+				return "int";
+			case "System.UInt32":
+				return "uint";
+			case "System.Int64":
+				return "long";
+			case "System.UInt64":
+				return "ulong";
+			case "System.Int16":
+				return "short";
+			case "System.UInt16":
+				return "ushort";
+			case "System.Byte":
+				return "byte";
+			case "System.SByte":
+				return "sbyte";
+			case "System.Decimal":
+				return "decimal";
+			case "System.Single":
+				return "float";
+			case "System.Double":
+				return "double";
+			case "System.Byte[]":
+				return "byte[]";
+			default:
+				return typeName;
+		}
 	}
 
 	internal string GetAssemblyName(string asmName)

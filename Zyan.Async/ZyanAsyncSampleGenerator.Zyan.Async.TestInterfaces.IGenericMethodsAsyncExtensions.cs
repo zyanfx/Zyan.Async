@@ -22,7 +22,7 @@ namespace Zyan.Async.TestInterfaces
 		}
 
 		// System.Collections.Generic.IList`1[T] GenericMethod3[T](System.Collections.Generic.Dictionary`2[System.String,T])
-		public static System.Threading.Tasks.Task<System.Collections.Generic.IList<T>> GenericMethod3Async<T>(this Zyan.Async.TestInterfaces.IGenericMethods self, System.Collections.Generic.Dictionary<System.String, T> parameters)
+		public static System.Threading.Tasks.Task<System.Collections.Generic.IList<T>> GenericMethod3Async<T>(this Zyan.Async.TestInterfaces.IGenericMethods self, System.Collections.Generic.Dictionary<string, T> parameters)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.GenericMethod3<T>(parameters));
 		}

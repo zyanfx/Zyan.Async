@@ -55,14 +55,14 @@ Assemblies = new[]
 // Extension method generator.
 // https://github.com/yallie/Zyan.Async
 //
-// Inspects loaded assemblies, extracts all types mathing the given filter.
-// Creates static class with asynchronous extension methods for every inspected type.
+// Loads and inspects assemblies, extracts all types mathing the given filter.
+// Creates a static class with asynchronous extension methods for every inspected type.
 //
 // Template parameters:
 // 
-// * AssemblyIgnoreList — regular expression of assemblies to ignore, e.g: @"^(mscorlib|System)$"
-// * TypeIgnoreList — regular expression of types to ignore, e.g: @"^(Microsoft\.VisualStudio\.TextTemplating)"
-// * MethodIgnoreList — regular expression of methods to ignore, e.g.: @"^(get_|set_|add_|remove_)"
+// * Assemblies — list of assembly files to process, relative to the template, e.g: @"..\MyProject\bin\Debug\MyProject.dll"
+// * TypeIgnoreList — regular expression of types to ignore, e.g: @"^(IgnoredTypeName|AnotherIgnoredType)"
+// * MethodIgnoreList — regular expression of methods to ignore, e.g.: @"^(add_|remove_)"
 // * TypeFilter — predicate used to filter out the unneeded types, e.g.: t => !Regex.IsMatch(t.Name, TypeIgnoreList)
 
             
@@ -82,7 +82,7 @@ Assemblies = new[]
 	// get loaded assemblies containing interfaces
 	var asms =
 		from asm in Assemblies.Select(GetAssemblyName).Select(File.ReadAllBytes).Select(Assembly.Load)
-		where !Regex.IsMatch(asm.GetName().Name, AssemblyIgnoreList) && GetTypes(asm).Any(TypeFilter)
+		where GetTypes(asm).Any(TypeFilter)
 		orderby asm.FullName
 		select asm;
 
@@ -381,7 +381,6 @@ manager.Process(true);
 	// Template parameters
 
 	private IEnumerable<string> assemblies = new string[0];
-	private string assemblyIgnoreList = @"^(mscorlib|Microsoft|System|WindowsBase|EnvDTE|Accessibility|UltimaLib|Zyan.Communication)";
 	private string typeIgnoreList = @"^(Microsoft\.VisualStudio\.TextTemplating)";
 	private string methodIgnoreList = @"^(get_|set_|add_|remove_)";
 	private Func<Type, bool> typeFilter;
@@ -390,12 +389,6 @@ manager.Process(true);
 	{
 		get { return assemblies; }
 		set { assemblies = value ?? new string[0]; }
-	}
-
-	public string AssemblyIgnoreList
-	{
-		get { return assemblyIgnoreList; }
-		set { assemblyIgnoreList = value; }
 	}
 
 	public string TypeIgnoreList
@@ -448,7 +441,42 @@ manager.Process(true);
 			return GetTypeName(type.GetElementType()) + "[" + rank + "]";
 		}
 
-		return (type.FullName ?? type.Name).Replace("+", ".");
+		var typeName = (type.FullName ?? type.Name).Replace("+", ".");
+		switch (typeName)
+		{
+			case "System.Object":
+				return "object";
+			case "System.String":
+				return "string";
+			case "System.Char":
+				return "char";
+			case "System.Int32":
+				return "int";
+			case "System.UInt32":
+				return "uint";
+			case "System.Int64":
+				return "long";
+			case "System.UInt64":
+				return "ulong";
+			case "System.Int16":
+				return "short";
+			case "System.UInt16":
+				return "ushort";
+			case "System.Byte":
+				return "byte";
+			case "System.SByte":
+				return "sbyte";
+			case "System.Decimal":
+				return "decimal";
+			case "System.Single":
+				return "float";
+			case "System.Double":
+				return "double";
+			case "System.Byte[]":
+				return "byte[]";
+			default:
+				return typeName;
+		}
 	}
 
 	internal string GetAssemblyName(string asmName)
@@ -458,6 +486,7 @@ manager.Process(true);
 			asmName = @"..\" + asmName;
 		}
 
+		// assume path relative to the template
 		if (!File.Exists(asmName))
 		{
 			asmName = Host.ResolvePath(asmName);

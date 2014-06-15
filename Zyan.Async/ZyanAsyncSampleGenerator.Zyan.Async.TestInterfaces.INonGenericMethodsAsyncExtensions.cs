@@ -16,43 +16,43 @@ namespace Zyan.Async.TestInterfaces
 		}
 
 		// Int32 GetValue()
-		public static System.Threading.Tasks.Task<System.Int32> GetValueAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self)
+		public static System.Threading.Tasks.Task<int> GetValueAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.GetValue());
 		}
 
 		// System.String GenerateName(Int32, System.Decimal)
-		public static System.Threading.Tasks.Task<System.String> GenerateNameAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Int32 a, System.Decimal b = 1.0M)
+		public static System.Threading.Tasks.Task<string> GenerateNameAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, int a, decimal b = 1.0M)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.GenerateName(a, b));
 		}
 
 		// System.Object CreateMessage(System.String, System.Object[])
-		public static System.Threading.Tasks.Task<System.Object> CreateMessageAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.String format = @"", params System.Object[] args)
+		public static System.Threading.Tasks.Task<object> CreateMessageAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, string format = @"", params object[] args)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.CreateMessage(format, args));
 		}
 
 		// System.Collections.Generic.List`1[System.String] ConvertToStrings(System.Collections.Generic.IEnumerable`1[System.Int32])
-		public static System.Threading.Tasks.Task<System.Collections.Generic.List<System.String>> ConvertToStringsAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Collections.Generic.IEnumerable<System.Int32> ints = null)
+		public static System.Threading.Tasks.Task<System.Collections.Generic.List<string>> ConvertToStringsAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Collections.Generic.IEnumerable<int> ints = null)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.ConvertToStrings(ints));
 		}
 
 		// System.String[,,,] MultidimensionalArrayExample(Int32[,,])
-		public static System.Threading.Tasks.Task<System.String[,,,]> MultidimensionalArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Int32[,,] a)
+		public static System.Threading.Tasks.Task<string[,,,]> MultidimensionalArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, int[,,] a)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.MultidimensionalArrayExample(a));
 		}
 
 		// Int32[][] JaggedArrayExample(System.String[][][])
-		public static System.Threading.Tasks.Task<System.Int32[][]> JaggedArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.String[][][] x)
+		public static System.Threading.Tasks.Task<int[][]> JaggedArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, string[][][] x)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.JaggedArrayExample(x));
 		}
 
 		// System.Collections.Generic.Dictionary`2[System.String,System.Collections.Generic.Dictionary`2[System.String,System.Int32]][] MixedArrayExample(System.Nullable`1[System.Int32][])
-		public static System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<System.String, System.Collections.Generic.Dictionary<System.String, System.Int32>>[]> MixedArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Nullable<System.Int32>[] arg)
+		public static System.Threading.Tasks.Task<System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, int>>[]> MixedArrayExampleAsync(this Zyan.Async.TestInterfaces.INonGenericMethods self, System.Nullable<int>[] arg)
 		{
 			return System.Threading.Tasks.Task.Run(() => self.MixedArrayExample(arg));
 		}
